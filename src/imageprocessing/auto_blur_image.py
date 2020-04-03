@@ -1,7 +1,7 @@
 # author: Asmaa Mirkhan ~ 2019
+## Modified by: Manash ~ 2020
 
 import os
-import argparse
 import cv2 as cv
 from .DetectorAPI import DetectorAPI
 
@@ -32,10 +32,15 @@ def blurBoxes(image, boxes):
 
     return image
 
-def blurit(imagepath, threshold=0.3):
+def blurit(imagepath, writepath, threshold=0.3, showimage=False):
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     image = cv.imread(imagepath)
     boxes, scores, classes, num = odapi.processFrame(image)
     boxes = [boxes[i] for i in range(0, num) if scores[i] > threshold]
     image = blurBoxes(image, boxes)
-    cv.imshow(imagepath, image)
+    print(imagepath, writepath, len(image))
+    if writepath:
+        writefullpath = os.path.join(writepath, os.path.split(imagepath)[-1])
+        cv.imwrite(writefullpath, image)
+    if showimage:
+        cv.imshow(writepath, image)
